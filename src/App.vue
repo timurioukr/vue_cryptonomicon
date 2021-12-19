@@ -26,9 +26,6 @@
               />
             </div>
 
-
-
-
             <div
               class="flex bg-white shadow-md p-1 rounded-md shadow-md flex-wrap"
             >
@@ -223,17 +220,36 @@ export default {
       tickers: [],
       sell: "",
       graph: [],
+      coinList: [],
+      coinFullName: [],
+      isDoubleName: ""
     };
   },
+  async created() {
+    const response = await fetch("https://min-api.cryptocompare.com/data/all/coinlist?summary=true");
+    const data = await response.json();
+    this.coinList = data.Data;
+    this.getAllFullName()
+  },
+  updated() {
+    console.log(this.tickers);
+  },
   methods: {
+    checkDoubleName() {
+      this.isDoubleName = this.tickers.includes(this.ticker)
+      console.log(this.isDoubleName);
+    },
+    getAllFullName() {
+      for (const property in this.coinList) {
+        this.coinFullName.push(this.coinList[property].FullName)
+      }
+    },
     add() {
       const currentTicker = {
         name: this.ticker,
         price: "-",
       };
-
       this.tickers.push(currentTicker);
-      console.log(this.tickers.forEach(element => console.log(element.name)));
       setInterval(async () => {
         const f = await fetch(
           `https://min-api.cryptocompare.com/data/price?fsym=${currentTicker.name}&tsyms=USD&api_key=131cdaabbbdd3b9303bb5df4616295000ddc0622a8a3b51b869b9276c30dc9cf`
@@ -243,7 +259,6 @@ export default {
           data.USD > 1 ? data.USD.toFixed(2) : data.USD.toPrecision(2);
         if (this.sell.name === currentTicker.name) {
           this.graph.push(data.USD);
-          // console.log("sssss",  this.graph)
         }
       }, 3000);
       this.ticker = "";
