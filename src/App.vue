@@ -16,7 +16,7 @@
             >
             <div class="mt-1 relative rounded-md shadow-md">
               <input
-                @keyup.enter="add"
+                @keyup.enter="checkAddingTickers"
                 v-model="ticker"
                 type="text"
                 name="wallet"
@@ -103,7 +103,7 @@
           </div>
         </div>
         <button
-          @click="add"
+          @click="checkAddingTickers"
           type="button"
           class="my-4 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
         >
@@ -225,19 +225,37 @@ export default {
       isDoubleName: ""
     };
   },
+  // watch: {
+  //   ticker: {
+  //     handler() {
+  //       console.log(this.ticker)
+  //     }
+  //   }
+  // },
   async created() {
     const response = await fetch("https://min-api.cryptocompare.com/data/all/coinlist?summary=true");
     const data = await response.json();
     this.coinList = data.Data;
     this.getAllFullName()
   },
-  updated() {
-    console.log(this.tickers);
-  },
   methods: {
-    checkDoubleName() {
-      this.isDoubleName = this.tickers.includes(this.ticker)
-      console.log(this.isDoubleName);
+    checkAddingTickers() {
+      let a = []
+      for (const property in this.tickers) {
+        a.push(this.tickers[property].name)
+      }
+      if (this.ticker.length > 0) {
+        this.add()
+        console.log(a.forEach(element => console.log(element)))
+    }
+
+      // function find(array, value) {
+      //   value = value.toLowerCase();
+      //   return array.filter(o => o.toLowerCase().includes(value));
+      // }
+      // let a = this.coinFullName.filter(el => el !== this.ticker)
+      // console.log(find(this.coinFullName, this.ticker));
+
     },
     getAllFullName() {
       for (const property in this.coinList) {
